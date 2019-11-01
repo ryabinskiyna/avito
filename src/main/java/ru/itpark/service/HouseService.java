@@ -10,29 +10,31 @@ import java.util.Comparator;
 import java.util.List;
 
 public class HouseService {
-    private final List<House> items = JdbcTemplate.executeQuery(
-            "jdbc:sqlite:db.sqlite",
-            "SELECT id, price, district, underground FROM houses",
-            resultSet -> new House(
-                    resultSet.getInt("id"),
-                    resultSet.getInt("price"),
-                    resultSet.getString("district"),
-                    resultSet.getString("underground")
-            )
-    );
-
-    public HouseService() throws SQLException {
+    private HouseService() {
     }
 
-    public List<House> sortBy(Comparator<House> comparator) {
-        List<House> result = new ArrayList<>(items);
-        result.sort(comparator);
-        return result;
+    private static List<House> getDataFromDB() throws SQLException {
+        return JdbcTemplate.executeQuery(
+                "jdbc:sqlite:db.sqlite",
+                "SELECT id, price, district, underground FROM houses",
+                resultSet -> new House(
+                        resultSet.getInt("id"),
+                        resultSet.getInt("price"),
+                        resultSet.getString("district"),
+                        resultSet.getString("underground")
+                )
+        );
     }
 
-    public List<House> searchByUnderground(String underground, Comparator<House> comparator) {
+    public static List<House> sortBy(Comparator<House> comparator) throws SQLException {
+        List<House> results = getDataFromDB();
+        results.sort(comparator);
+        return results;
+    }
+
+    public static List<House> searchByUnderground(String underground, Comparator<House> comparator) throws SQLException {
         List<House> results = new ArrayList<>();
-        for (House house : items) {
+        for (House house : getDataFromDB()) {
             if (StringService.containsIgnoreCase(house.getUnderground(), underground)) {
                 results.add(house);
             }
@@ -41,15 +43,15 @@ public class HouseService {
         return results;
     }
 
-    public List<House> searchByPrice(int min, int max, Comparator<House> comparator) {
-        List<House> result = new ArrayList<>();
-        for (House house : items) {
+    public static List<House> searchByPrice(int min, int max, Comparator<House> comparator) throws SQLException {
+        List<House> results = new ArrayList<>();
+        for (House house : getDataFromDB()) {
             if (house.getPrice() >= min && house.getPrice() <= max) {
-                result.add(house);
+                results.add(house);
             }
         }
-        result.sort(comparator);
-        return result;
+        results.sort(comparator);
+        return results;
     }
 }
 
