@@ -10,10 +10,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class HouseService {
-    private HouseService() {
-    }
 
-    private static List<House> getDataFromDB() throws SQLException {
+    private List<House> getDataFromDB() throws SQLException {
         return JdbcTemplate.executeQuery(
                 "jdbc:sqlite:db.sqlite",
                 "SELECT id, price, district, underground FROM houses",
@@ -26,13 +24,13 @@ public class HouseService {
         );
     }
 
-    public static List<House> sortBy(Comparator<House> comparator) throws SQLException {
+    public List<House> sortBy(Comparator<House> comparator) throws SQLException {
         List<House> results = getDataFromDB();
         results.sort(comparator);
         return results;
     }
 
-    public static List<House> searchByUnderground(String underground, Comparator<House> comparator) throws SQLException {
+    public List<House> searchByUnderground(String underground, Comparator<House> comparator) throws SQLException {
         List<House> results = new ArrayList<>();
         for (House house : getDataFromDB()) {
             if (StringService.containsIgnoreCase(house.getUnderground(), underground)) {
@@ -43,7 +41,7 @@ public class HouseService {
         return results;
     }
 
-    public static List<House> searchByPrice(int min, int max, Comparator<House> comparator) throws SQLException {
+    public List<House> searchByPrice(int min, int max, Comparator<House> comparator) throws SQLException {
         List<House> results = new ArrayList<>();
         for (House house : getDataFromDB()) {
             if (house.getPrice() >= min && house.getPrice() <= max) {
