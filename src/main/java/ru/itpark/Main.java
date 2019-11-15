@@ -14,7 +14,7 @@ public class Main {
         System.out.println(serviceJdbc.searchByDistrict("Вахитовский", (o1, o2) -> o1.getPrice() - o2.getPrice()));
         System.out.println(serviceJdbc.sortBy((o1, o2) -> o2.getPrice() - o1.getPrice()));
 
-        HouseService serviceInMemory = new HouseService(new HouseRepositoryInMemoryImpl());
+        final HouseService serviceInMemory = new HouseService(new HouseRepositoryInMemoryImpl());
         serviceInMemory.register(new House(0, 1, "а", "б"));
         serviceInMemory.register(new House(0, 2, "в", "г"));
         serviceInMemory.register(new House(0, 3, "д", "е"));
