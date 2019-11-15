@@ -29,14 +29,14 @@ public class HouseService {
     }
 
     public List<House> sortBy(Comparator<House> comparator) {
-        List<House> results = repository.getData();
+        List<House> results = repository.getAll();
         results.sort(comparator);
         return results;
     }
 
     public List<House> searchByDistrict(String district, Comparator<House> comparator) {
         List<House> results = new ArrayList<>();
-        for (House house : repository.getData()) {
+        for (House house : repository.getAll()) {
             if (house.getDistrict().equals(district)) {
                 results.add(house);
             }
@@ -47,7 +47,7 @@ public class HouseService {
 
     public List<House> searchByPrice(int min, int max, Comparator<House> comparator) {
         List<House> results = new ArrayList<>();
-        for (House house : repository.getData()) {
+        for (House house : repository.getAll()) {
             if (house.getPrice() >= min && house.getPrice() <= max) {
                 results.add(house);
             }

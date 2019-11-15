@@ -7,5 +7,5 @@ import java.util.List;
 public interface HouseRepository {
     House save(House house);
 
-    List<House> getData();
+    List<House> getAll();
 }

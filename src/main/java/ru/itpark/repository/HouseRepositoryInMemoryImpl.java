@@ -28,7 +28,7 @@ public class HouseRepositoryInMemoryImpl implements HouseRepository {
     }
 
     @Override
-    public List<House> getData() {
+    public List<House> getAll() {
         return houses;
     }
 }

@@ -18,7 +18,7 @@ public class HouseRepositoryJdbcImpl implements HouseRepository {
     }
 
     @Override
-    public List<House> getData() {
+    public List<House> getAll() {
         return JdbcTemplate.executeQuery(url,
                 "SELECT id, price, district, underground FROM houses",
                 rs -> new House(
