@@ -1,39 +1,43 @@
 package ru.itpark.service;
 
 import ru.itpark.model.House;
-import ru.itpark.util.JdbcTemplate;
-import ru.itpark.util.StringService;
+import ru.itpark.repository.HouseRepository;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public class HouseService {
+    private final HouseRepository repository;
 
-    private List<House> getDataFromDB() throws SQLException {
-        return JdbcTemplate.executeQuery(
-                "jdbc:sqlite:db.sqlite",
-                "SELECT id, price, district, underground FROM houses",
-                resultSet -> new House(
-                        resultSet.getInt("id"),
-                        resultSet.getInt("price"),
-                        resultSet.getString("district"),
-                        resultSet.getString("underground")
-                )
-        );
+    public HouseService(HouseRepository repository) {
+        this.repository = repository;
     }
 
-    public List<House> sortBy(Comparator<House> comparator) throws SQLException {
-        List<House> results = getDataFromDB();
+    public House register(House house) {
+        if (house.getId() != 0) {
+            throw new IllegalArgumentException("House id must be 0 for registration");
+        }
+        return repository.save(house);
+    }
+
+    public House renew(House house) {
+        if (house.getId() == 0) {
+            throw new IllegalArgumentException("House id must not be 0 for renew");
+        }
+        return repository.save(house);
+    }
+
+    public List<House> sortBy(Comparator<House> comparator) {
+        List<House> results = repository.getData();
         results.sort(comparator);
         return results;
     }
 
-    public List<House> searchByUnderground(String underground, Comparator<House> comparator) throws SQLException {
+    public List<House> searchByDistrict(String district, Comparator<House> comparator) {
         List<House> results = new ArrayList<>();
-        for (House house : getDataFromDB()) {
-            if (StringService.containsIgnoreCase(house.getUnderground(), underground)) {
+        for (House house : repository.getData()) {
+            if (house.getDistrict().equals(district)) {
                 results.add(house);
             }
         }
@@ -41,9 +45,9 @@ public class HouseService {
         return results;
     }
 
-    public List<House> searchByPrice(int min, int max, Comparator<House> comparator) throws SQLException {
+    public List<House> searchByPrice(int min, int max, Comparator<House> comparator) {
         List<House> results = new ArrayList<>();
-        for (House house : getDataFromDB()) {
+        for (House house : repository.getData()) {
             if (house.getPrice() >= min && house.getPrice() <= max) {
                 results.add(house);
             }
